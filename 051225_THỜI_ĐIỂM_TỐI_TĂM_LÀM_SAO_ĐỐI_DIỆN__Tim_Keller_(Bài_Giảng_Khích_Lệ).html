@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THỜI ĐIỂM TỐI TĂM LÀM SAO ĐỐI DIỆN | Tim Keller (Bài Giảng Khích Lệ)</title>
+<style>
+    /* --- CẤU HÌNH GIAO DIỆN CHUNG --- */
+    :root {
+        --bg-color: #2b2b2b;
+        --text-normal: #cccccc;
+        --text-gold: #d4af37;
+        --btn-bg: rgba(60, 60, 60, 0.4);
+        --highlight-bg: rgba(212, 175, 55, 0.25);
+        --font-size: 16px;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-normal);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 0 5px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    /* --- TIÊU ĐỀ --- */
+    h1.main-title {
+        font-size: 1.0rem;
+        font-weight: normal;
+        color: var(--text-gold);
+        margin: 8px 0;
+        padding-left: 5px;
+        flex-shrink: 0;
+    }
+
+    /* --- KHUNG VIDEO --- */
+    .video-wrapper {
+        flex-shrink: 0;
+        background-color: var(--bg-color);
+        padding-bottom: 5px;
+        border-bottom: 1px solid #444;
+        z-index: 20;
+        transition: all 0.3s ease;
+    }
+
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        border-radius: 6px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        transition: all 0.3s ease;
+    }
+
+    .video-container.hidden {
+        padding-bottom: 0 !important;
+        height: 0 !important;
+        opacity: 0;
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /* --- CONTROLS --- */
+    .controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 0;
+        flex-wrap: nowrap;
+        flex-shrink: 0;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .btn-icon {
+        background-color: transparent;
+        border: 1px solid #555;
+        color: var(--text-normal);
+        border-radius: 6px;
+        width: 34px;
+        height: 34px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .btn-icon:hover {
+        background-color: rgba(255,255,255,0.1);
+        border-color: var(--text-gold);
+    }
+
+    .btn-icon.active {
+        border-color: var(--text-gold);
+        background-color: rgba(212, 175, 55, 0.15);
+        box-shadow: 0 0 3px var(--text-gold);
+    }
+
+    /* --- TRANSCRIPT --- */
+    #transcript-area {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 10px;
+        margin-top: 0;
+        scrollbar-width: thin;
+        scrollbar-color: var(--text-gold) var(--bg-color);
+        position: relative;
+        z-index: 1;
+    }
+
+    #transcript-area::-webkit-scrollbar { width: 6px; }
+    #transcript-area::-webkit-scrollbar-track { background: var(--bg-color); }
+    #transcript-area::-webkit-scrollbar-thumb { background-color: var(--text-gold); border-radius: 3px; }
+
+    .cue {
+        padding: 8px 10px;
+        margin-bottom: 4px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: var(--font-size);
+        line-height: 1.5;
+        transition: background 0.2s;
+        border-left: 3px solid transparent;
+        color: var(--text-normal);
+    }
+
+    .cue:hover { background-color: rgba(255,255,255,0.08); }
+
+    .cue.active {
+        color: #ffffff !important;
+        background-color: var(--highlight-bg);
+        border-left: 3px solid var(--text-gold);
+        font-weight: 600;
+    }
+
+    .cue-time {
+        font-size: 0.8em;
+        opacity: 0.6;
+        margin-right: 8px;
+        user-select: none;
+        font-family: monospace;
+        color: var(--text-gold);
+    }
+
+    /* --- END SCREEN --- */
+    #end-screen {
+        display: none;
+        padding: 30px 10px;
+        text-align: center;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .soli-header {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--text-gold);
+        text-transform: uppercase;
+    }
+
+    /* Light Mode */
+    body.light-mode { --bg-color: #f5f5f5; --text-normal: #333333; --text-gold: #b08d28; }
+    body.light-mode .cue.active { color: #000000 !important; }
+
+    .search-input { padding: 10px; width: 60%; }
+    .search-btn { padding: 10px 15px; background: var(--text-gold); color: #fff; border: none; font-weight: bold; cursor: pointer; }
+    .big-btn { padding: 10px 20px; border: 2px solid var(--text-gold); color: var(--text-gold); text-decoration: none; border-radius: 4px; margin-top: 10px; display: inline-block; font-weight: bold; }
+    .big-btn:hover { background: var(--text-gold); color: #fff; }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="main-title">THỜI ĐIỂM TỐI TĂM LÀM SAO ĐỐI DIỆN | Tim Keller (Bài Giảng Khích Lệ)</h1>
+
+    <div class="video-wrapper">
+        <div class="video-container" id="video-box">
+            <iframe id="yt-player"
+                src="https://www.youtube-nocookie.com/embed/ulmaUtbayGY?enablejsapi=1&playsinline=1&modestbranding=1&rel=0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <div class="controls">
+            <button class="btn-icon" id="btn-rewind" title="Lùi 10s">⏪</button>
+            <button class="btn-icon" id="btn-play" title="Phát">▶️</button>
+            <button class="btn-icon" id="btn-forward" title="Tới 10s">⏩</button>
+            <button class="btn-icon" id="btn-toggle-video" title="Ẩn/Hiện Video">👁️</button>
+            <button class="btn-icon" id="btn-font-down" title="Giảm chữ">➖</button>
+            <button class="btn-icon" id="btn-font-up" title="Tăng chữ">➕</button>
+            <button class="btn-icon" id="btn-autoscroll" title="Tự động cuộn">📜</button>
+             <button class="btn-icon" id="btn-theme" title="Sáng/Tối">☀️</button>
+        </div>
+    </div>
+
+    <div id="transcript-area"></div>
+
+    <div id="end-screen">
+        <div class="soli-header">Soli Deo Gloria</div>
+        <div style="font-style: italic; margin-bottom: 30px;">(Mọi Vinh Hiển Duy Chúa)</div>
+
+        <div style="margin-bottom: 20px;">
+            <form action="https://www.google.com/search" method="get" target="_blank" style="display:flex; justify-content:center;">
+                <input type="hidden" name="q" value="site:tinlanhcaichanh.com">
+                <input type="text" name="q" placeholder="Tìm kiếm..." class="search-input">
+                <button type="submit" class="search-btn">Tìm</button>
+            </form>
+        </div>
+
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <button class="big-btn" id="btn-replay" style="background:transparent; cursor:pointer;">Xem lại Video</button>
+            <a href="https://www.youtube.com/watch?v=ulmaUtbayGY" target="_blank" class="big-btn">Tải "Nghiên Cứu và Học Tập"</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const transcriptData = [{"start": 0.529, "end": 7.98, "text": "I must apologize to you about the sermon"}, {"start": 7.98, "end": 11.19, "text": "I'm about to preach because the the"}, {"start": 11.19, "end": 15.69, "text": "service is filled with joy the worship"}, {"start": 15.69, "end": 17.46, "text": "up to now has brought us to a"}, {"start": 17.46, "end": 20.58, "text": "mountaintop and now I'm going to take"}, {"start": 20.58, "end": 24.72, "text": "you into the valley I I do seriously"}, {"start": 24.72, "end": 27.63, "text": "need to at least warn you that there is"}, {"start": 27.63, "end": 29.07, "text": "a mountaintop on the other side of this"}, {"start": 29.07, "end": 31.349, "text": "valley but we're going to be reading"}, {"start": 31.349, "end": 35.16, "text": "Psalm 88 it has to do with what how"}, {"start": 35.16, "end": 38.07, "text": "Christians should act when they are"}, {"start": 38.07, "end": 40.68, "text": "going through very dark times so I"}, {"start": 40.68, "end": 44.01, "text": "actually am warning you especially the"}, {"start": 44.01, "end": 45.539, "text": "first of the four points of this sermon"}, {"start": 45.539, "end": 49.68, "text": "it's a real downer but there really is"}, {"start": 49.68, "end": 52.76, "text": "as we go into the valley there really is"}, {"start": 52.76, "end": 54.92, "text": "something wonderful on the other side"}, {"start": 54.92, "end": 57.39, "text": "now let me read to you from Psalm"}, {"start": 57.39, "end": 60.449, "text": "I'll just read verses 1 to 2 and then"}, {"start": 60.449, "end": 66.54, "text": "to the ends 18 Oh Lord the God who saves"}, {"start": 66.54, "end": 70.909, "text": "me day and night I cry out before you"}, {"start": 70.909, "end": 75.03, "text": "may my prayer come before you turn your"}, {"start": 75.03, "end": 78.299, "text": "ear to my cry you have put me in the"}, {"start": 78.299, "end": 81.63, "text": "lowest pit in the darkest depths your"}, {"start": 81.63, "end": 83.52, "text": "wrath lies heavily upon me you have"}, {"start": 83.52, "end": 86.85, "text": "overwhelmed me with all your waves you"}, {"start": 86.85, "end": 89.49, "text": "have taken from me my closest friends"}, {"start": 89.49, "end": 92.759, "text": "and have made me repulsive to them I am"}, {"start": 92.759, "end": 95.04, "text": "confined and cannot escape my eyes are"}, {"start": 95.04, "end": 96.81, "text": "dim with grief I call to you O Lord"}, {"start": 96.81, "end": 99.2, "text": "every day I spread out my hands to you"}, {"start": 99.2, "end": 102.63, "text": "do you show your wonders to the dead to"}, {"start": 102.63, "end": 104.1, "text": "those who are dead rise up and praise"}, {"start": 104.1, "end": 104.52, "text": "you"}, {"start": 104.52, "end": 106.77, "text": "is your love declared in the grave your"}, {"start": 106.77, "end": 108.24, "text": "faithfulness and destruction are your"}, {"start": 108.24, "end": 109.979, "text": "wonders known in the place of darkness"}, {"start": 109.979, "end": 112.29, "text": "or your righteous deeds in the land of"}, {"start": 112.29, "end": 115.68, "text": "oblivion but I cry to you for help oh"}, {"start": 115.68, "end": 117.93, "text": "Lord in the morning my prayer comes"}, {"start": 117.93, "end": 122.549, "text": "before you why o Lord do you reject me"}, {"start": 122.549, "end": 126.42, "text": "and hide your face from me for my youth"}, {"start": 126.42, "end": 128.069, "text": "I have been afflicted and close to death"}, {"start": 128.069, "end": 129.78, "text": "I have suffered your terrors and I'm in"}, {"start": 129.78, "end": 132.239, "text": "despair your wrath is swept over me or"}, {"start": 132.239, "end": 133.81, "text": "your terrors have destroyed"}, {"start": 133.81, "end": 136.45, "text": "me all day long they surround me like a"}, {"start": 136.45, "end": 138.79, "text": "flood they have completely engulfed me"}, {"start": 138.79, "end": 141.79, "text": "you have taken my companions and my"}, {"start": 141.79, "end": 145.989, "text": "loved ones from me the darkness is my"}, {"start": 145.989, "end": 148.8, "text": "closest friend"}, {"start": 149.069, "end": 152.769, "text": "now the Bible especially the Book of"}, {"start": 152.769, "end": 154.9, "text": "Psalms is filled with prayers by"}, {"start": 154.9, "end": 157.239, "text": "suffering people people who are going"}, {"start": 157.239, "end": 160.15, "text": "through darkness but virtually all of"}, {"start": 160.15, "end": 163.93, "text": "them end on a note of hope so almost all"}, {"start": 163.93, "end": 165.43, "text": "the prayers that you read in the Psalms"}, {"start": 165.43, "end": 171.43, "text": "by people who are in difficult times"}, {"start": 171.43, "end": 173.68, "text": "that are going through suffering by the"}, {"start": 173.68, "end": 176.83, "text": "end of the the prayer there's always"}, {"start": 176.83, "end": 179.709, "text": "some note in which the psalmist says I"}, {"start": 179.709, "end": 182.14, "text": "see you here or I know I will see your"}, {"start": 182.14, "end": 184.049, "text": "goodness in the land of the living or I"}, {"start": 184.049, "end": 186.94, "text": "I know you're with me or something along"}, {"start": 186.94, "end": 189.67, "text": "those lines but there's two Psalms and"}, {"start": 189.67, "end": 191.56, "text": "I've we're looking at one of them there"}, {"start": 191.56, "end": 195.489, "text": "are two Psalms in the Psalter psalm"}, {"start": 195.489, "end": 198.97, "text": "and Psalm 88 that do not end on a note"}, {"start": 198.97, "end": 202.69, "text": "of hope at all in fact you'll notice the"}, {"start": 202.69, "end": 205.049, "text": "word darkness shows up three times in"}, {"start": 205.049, "end": 207.76, "text": "this Psalm including at the end it's"}, {"start": 207.76, "end": 210.25, "text": "clearly the theme and actually even"}, {"start": 210.25, "end": 212.38, "text": "though in the English translation the"}, {"start": 212.38, "end": 214.39, "text": "last line is darkness is my closest"}, {"start": 214.39, "end": 218.26, "text": "friend in in Hebrew the last word of the"}, {"start": 218.26, "end": 220.66, "text": "psalm is darkness in other words the"}, {"start": 220.66, "end": 223.09, "text": "very very end a more literal translation"}, {"start": 223.09, "end": 225.97, "text": "would be and my only friend my closest"}, {"start": 225.97, "end": 228.37, "text": "friend now is darkness and that's the"}, {"start": 228.37, "end": 230.829, "text": "end of the prayer now what kind of"}, {"start": 230.829, "end": 234.609, "text": "prayer ends like that what kind of"}, {"start": 234.609, "end": 237.15, "text": "prayer ends not in Hope but in darkness"}, {"start": 237.15, "end": 239.5, "text": "what is this prayer doing in the Bible"}, {"start": 239.5, "end": 242.019, "text": "it's here I think that teach us a number"}, {"start": 242.019, "end": 246.43, "text": "of things four things this this psalm is"}, {"start": 246.43, "end": 250.959, "text": "going to teach us that darkness can be"}, {"start": 250.959, "end": 252.97, "text": "something that lasts a long time for a"}, {"start": 252.97, "end": 255.28, "text": "believing Christian a believing"}, {"start": 255.28, "end": 257.919, "text": "Christian can be in darkness for a good"}, {"start": 257.919, "end": 260.35, "text": "while that's the first thing secondly"}, {"start": 260.35, "end": 263.95, "text": "however it will teach us there's no"}, {"start": 263.95, "end": 266.02, "text": "better place to learn about the grace of"}, {"start": 266.02, "end": 267.25, "text": "God than in dark time"}, {"start": 267.25, "end": 270.22, "text": "and also there's no better place thirdly"}, {"start": 270.22, "end": 273.79, "text": "to become a person of greatness than in"}, {"start": 273.79, "end": 274.51, "text": "dark times"}, {"start": 274.51, "end": 278.91, "text": "and lastly darkness can be relativized"}, {"start": 278.91, "end": 281.2, "text": "let's look at these three these four"}, {"start": 281.2, "end": 283.0, "text": "things first of all first thing we learn"}, {"start": 283.0, "end": 286.51, "text": "here is the darkness is something that"}, {"start": 286.51, "end": 288.94, "text": "for a believing Christian can last a"}, {"start": 288.94, "end": 291.91, "text": "good while this man says in the very"}, {"start": 291.91, "end": 294.01, "text": "beginning you are the God who saves me"}, {"start": 294.01, "end": 296.31, "text": "so he's actually trusting God as Savior"}, {"start": 296.31, "end": 298.78, "text": "he's trusting God a Savior and he's"}, {"start": 298.78, "end": 301.09, "text": "praying he says every day I'm praying to"}, {"start": 301.09, "end": 302.89, "text": "you and I'm coming to you and I'm"}, {"start": 302.89, "end": 304.81, "text": "calling you and I'm trusting you as"}, {"start": 304.81, "end": 309.42, "text": "Savior now there's two kinds of darkness"}, {"start": 309.42, "end": 311.95, "text": "outer darkness has more to do with the"}, {"start": 311.95, "end": 313.39, "text": "circumstances of your life we don't"}, {"start": 313.39, "end": 316.03, "text": "really know exactly what's happening to"}, {"start": 316.03, "end": 318.22, "text": "this man we do know that he's losing all"}, {"start": 318.22, "end": 321.04, "text": "of his friends we also know that he"}, {"start": 321.04, "end": 323.38, "text": "seems to be facing death at least it's"}, {"start": 323.38, "end": 325.51, "text": "either imminent or possible because"}, {"start": 325.51, "end": 327.61, "text": "those questions where he says to the"}, {"start": 327.61, "end": 328.06, "text": "dead"}, {"start": 328.06, "end": 330.61, "text": "Reisman pray you praise you is your"}, {"start": 330.61, "end": 331.78, "text": "righteousness known in the land of"}, {"start": 331.78, "end": 335.02, "text": "oblivion he's clearly facing death we're"}, {"start": 335.02, "end": 337.0, "text": "not sure exactly what the problems are"}, {"start": 337.0, "end": 339.19, "text": "but actually I always find that that in"}, {"start": 339.19, "end": 341.43, "text": "the Book of Psalms when I'm reading this"}, {"start": 341.43, "end": 344.08, "text": "prayer by a person suffering and I don't"}, {"start": 344.08, "end": 345.55, "text": "quite know what the person's going"}, {"start": 345.55, "end": 347.43, "text": "through it's easier to make it my own"}, {"start": 347.43, "end": 350.32, "text": "it's easier for me to enter in and have"}, {"start": 350.32, "end": 354.25, "text": "it help me so outwardly is the"}, {"start": 354.25, "end": 355.84, "text": "circumstances of his life are darkness"}, {"start": 355.84, "end": 357.76, "text": "but inwardly he's experiencing darkness"}, {"start": 357.76, "end": 361.21, "text": "too you see if outwardly things are"}, {"start": 361.21, "end": 363.37, "text": "going very badly in your life but"}, {"start": 363.37, "end": 365.29, "text": "inwardly you sense God's presence and"}, {"start": 365.29, "end": 368.41, "text": "love you can make it but that's not"}, {"start": 368.41, "end": 371.05, "text": "what's happening here he feels abandoned"}, {"start": 371.05, "end": 373.36, "text": "he feels God is angry with him and has"}, {"start": 373.36, "end": 375.69, "text": "rejected him he feels that God is gone"}, {"start": 375.69, "end": 377.919, "text": "so he's experiencing both outward"}, {"start": 377.919, "end": 379.33, "text": "darkness and inward darkness and he's"}, {"start": 379.33, "end": 380.74, "text": "praying and he's trusting God his Savior"}, {"start": 380.74, "end": 383.14, "text": "and by the end of this of the the prayer"}, {"start": 383.14, "end": 385.21, "text": "he's still in darkness what is the"}, {"start": 385.21, "end": 388.54, "text": "teaching here then and the teaching is"}, {"start": 388.54, "end": 391.39, "text": "that you can be a believing Christian"}, {"start": 391.39, "end": 393.61, "text": "you can be trusting God's for his for"}, {"start": 393.61, "end": 395.62, "text": "your salvation you can be praying and"}, {"start": 395.62, "end": 398.2, "text": "doing doing what you think you should be"}, {"start": 398.2, "end": 399.4, "text": "doing and yet"}, {"start": 399.4, "end": 401.74, "text": "it doesn't get any better for a long"}, {"start": 401.74, "end": 403.44, "text": "time"}, {"start": 403.44, "end": 405.699, "text": "now you might say well you warned me"}, {"start": 405.699, "end": 408.479, "text": "this this first point was a downer and"}, {"start": 408.479, "end": 411.85, "text": "it is on the other hand it's a mercy -"}, {"start": 411.85, "end": 415.99, "text": "why is it a mercy well first of all it"}, {"start": 415.99, "end": 417.55, "text": "teaches us something it teaches us about"}, {"start": 417.55, "end": 419.65, "text": "the realism of the Bible let me quote"}, {"start": 419.65, "end": 424.12, "text": "from that great work of art The Princess"}, {"start": 424.12, "end": 428.919, "text": "Bride that movie The Princess Bride"}, {"start": 428.919, "end": 430.6, "text": "there's a great line in that great work"}, {"start": 430.6, "end": 432.3, "text": "of art goes like this"}, {"start": 432.3, "end": 436.72, "text": "life is pain highness anyone who says"}, {"start": 436.72, "end": 441.49, "text": "differently is selling something well"}, {"start": 441.49, "end": 444.34, "text": "guess what the Bible isn't selling"}, {"start": 444.34, "end": 446.47, "text": "something if you're thinking about"}, {"start": 446.47, "end": 449.11, "text": "becoming a Christian if you're wondering"}, {"start": 449.11, "end": 450.55, "text": "whether I should have anything to do"}, {"start": 450.55, "end": 451.78, "text": "with Christianity I want you to know"}, {"start": 451.78, "end": 454.84, "text": "Christianity is realistic it's not"}, {"start": 454.84, "end": 457.87, "text": "selling you anything it tells you you"}, {"start": 457.87, "end": 460.33, "text": "can do everything right and you can have"}, {"start": 460.33, "end": 462.729, "text": "pretty long times in which the darkness"}, {"start": 462.729, "end": 465.19, "text": "just doesn't lift but there's also a"}, {"start": 465.19, "end": 470.8, "text": "mercy here see our expectations Kathy"}, {"start": 470.8, "end": 472.449, "text": "and I over the years have had people"}, {"start": 472.449, "end": 474.31, "text": "actually literally say this or they've"}, {"start": 474.31, "end": 476.59, "text": "say it in different words they say when"}, {"start": 476.59, "end": 478.21, "text": "I became a Christian I figured that now"}, {"start": 478.21, "end": 479.44, "text": "that I'm a Christian now that I'm"}, {"start": 479.44, "end": 482.32, "text": "walking with God nothing really bad"}, {"start": 482.32, "end": 486.22, "text": "could happen to me and you see when if"}, {"start": 486.22, "end": 487.69, "text": "that's your expectation now I'm a"}, {"start": 487.69, "end": 489.37, "text": "Christian I'm kind of safe bad things"}, {"start": 489.37, "end": 491.74, "text": "can't happen to me I'm a Christian I you"}, {"start": 491.74, "end": 493.93, "text": "know I'm a good person now I'm I've"}, {"start": 493.93, "end": 496.03, "text": "cleaned up my life that real bad things"}, {"start": 496.03, "end": 499.539, "text": "can't happen to me well you say okay I"}, {"start": 499.539, "end": 502.72, "text": "know somebody better than you way better"}, {"start": 502.72, "end": 507.639, "text": "than you Jesus Christ and he did not"}, {"start": 507.639, "end": 510.909, "text": "have a great life he was rejected he was"}, {"start": 510.909, "end": 514.99, "text": "tortured and killed in other words and"}, {"start": 514.99, "end": 516.7, "text": "and he actually says by the way Jesus"}, {"start": 516.7, "end": 519.7, "text": "says in John chapter 16 in this world"}, {"start": 519.7, "end": 523.209, "text": "you will have trouble and he even says"}, {"start": 523.209, "end": 525.1, "text": "servant is not above his master the"}, {"start": 525.1, "end": 527.14, "text": "world hated me it's going to hate you"}, {"start": 527.14, "end": 530.38, "text": "and and here's the mercy expectations"}, {"start": 530.38, "end": 531.91, "text": "are a big part of how you handle"}, {"start": 531.91, "end": 532.84, "text": "suffering"}, {"start": 532.84, "end": 534.55, "text": "because the suffering is painful and"}, {"start": 534.55, "end": 536.65, "text": "terrible but what if on top of that and"}, {"start": 536.65, "end": 539.71, "text": "this is your fault if you do it the"}, {"start": 539.71, "end": 540.91, "text": "suffering may not be your fault"}, {"start": 540.91, "end": 543.49, "text": "but the but false expectations the idea"}, {"start": 543.49, "end": 545.38, "text": "that well now that I'm following Jesus"}, {"start": 545.38, "end": 547.35, "text": "bad things really can't happen to me"}, {"start": 547.35, "end": 549.46, "text": "even though they happen to Jesus but"}, {"start": 549.46, "end": 550.9, "text": "they won't happen to me that's not what"}, {"start": 550.9, "end": 552.28, "text": "the Bible says that's not what Jesus"}, {"start": 552.28, "end": 555.31, "text": "says and your expectations if they if"}, {"start": 555.31, "end": 558.46, "text": "they are aligned with reality knowing"}, {"start": 558.46, "end": 560.05, "text": "that the Bible is not selling anything"}, {"start": 560.05, "end": 562.93, "text": "to you they're aligned with reality it"}, {"start": 562.93, "end": 565.24, "text": "can have a it can help you enormous Lee"}, {"start": 565.24, "end": 567.46, "text": "face the troubles because very often"}, {"start": 567.46, "end": 569.68, "text": "half the pain that you're experiencing"}, {"start": 569.68, "end": 570.79, "text": "is not from the suffering it's from"}, {"start": 570.79, "end": 572.23, "text": "those false expectations how could this"}, {"start": 572.23, "end": 574.35, "text": "be happening it shouldn't happen to me a"}, {"start": 574.35, "end": 576.91, "text": "servant is not above his master or her"}, {"start": 576.91, "end": 580.6, "text": "master so this is the you know okay"}, {"start": 580.6, "end": 583.03, "text": "let's let's just you should be glad you"}, {"start": 583.03, "end": 584.29, "text": "know this is the worst of the four"}, {"start": 584.29, "end": 587.41, "text": "points and yet there's a mercy in it"}, {"start": 587.41, "end": 590.41, "text": "that's just the Bible is not selling"}, {"start": 590.41, "end": 592.39, "text": "anything there's a realism about"}, {"start": 592.39, "end": 594.16, "text": "Christianity and therefore you really"}, {"start": 594.16, "end": 596.35, "text": "can stay in darkness a fairly long time"}, {"start": 596.35, "end": 598.93, "text": "and and and be a Christian and do and"}, {"start": 598.93, "end": 602.14, "text": "pray to God but point to it's in the"}, {"start": 602.14, "end": 605.41, "text": "dark times that are the dark times are"}, {"start": 605.41, "end": 607.45, "text": "really the best place in time to learn"}, {"start": 607.45, "end": 609.82, "text": "about the grace of God see I've given"}, {"start": 609.82, "end": 611.56, "text": "the man credit but let's let's take a"}, {"start": 611.56, "end": 613.27, "text": "look at the way in which he prays here's"}, {"start": 613.27, "end": 614.65, "text": "here's some things he's not doing all"}, {"start": 614.65, "end": 617.62, "text": "that well for example some of this"}, {"start": 617.62, "end": 619.57, "text": "prayer is not really a prayer it's an"}, {"start": 619.57, "end": 623.32, "text": "interrogation so for example when he"}, {"start": 623.32, "end": 624.97, "text": "says do you show your wonders to the"}, {"start": 624.97, "end": 627.19, "text": "dead do those who are dead rise up and"}, {"start": 627.19, "end": 629.11, "text": "praise you as your love declared in the"}, {"start": 629.11, "end": 630.43, "text": "grave these are these are sarcastic"}, {"start": 630.43, "end": 633.19, "text": "rhetorical questions he says as your"}, {"start": 633.19, "end": 635.05, "text": "faithfulness known in the land of"}, {"start": 635.05, "end": 636.58, "text": "destruction here's what he's saying he"}, {"start": 636.58, "end": 639.91, "text": "says I want to be your witness I want to"}, {"start": 639.91, "end": 641.8, "text": "tell the world about you how am I gonna"}, {"start": 641.8, "end": 645.13, "text": "do that if I'm dead if you have all"}, {"start": 645.13, "end": 647.26, "text": "these things I want to do for you you"}, {"start": 647.26, "end": 649.21, "text": "know that and yet you're not letting me"}, {"start": 649.21, "end": 650.95, "text": "do any of them what the how much sense"}, {"start": 650.95, "end": 652.17, "text": "does that make"}, {"start": 652.17, "end": 655.99, "text": "he comes very close to saying answer me"}, {"start": 655.99, "end": 659.5, "text": "God some people would call this"}, {"start": 659.5, "end": 662.2, "text": "intemperate some people would call it"}, {"start": 662.2, "end": 664.18, "text": "blasphemous it's probably somewhere in"}, {"start": 664.18, "end": 665.95, "text": "the middle"}, {"start": 665.95, "end": 668.05, "text": "but of course he's not controlling his"}, {"start": 668.05, "end": 670.63, "text": "heart he's not being deferential he's"}, {"start": 670.63, "end": 672.97, "text": "not being respectful he's not saying thy"}, {"start": 672.97, "end": 673.9, "text": "will be done"}, {"start": 673.9, "end": 676.72, "text": "Oh No also by the way many commentators"}, {"start": 676.72, "end": 678.64, "text": "point something out that you might miss"}, {"start": 678.64, "end": 680.68, "text": "I certainly have over the years but"}, {"start": 680.68, "end": 682.36, "text": "there's another place where he says from"}, {"start": 682.36, "end": 684.55, "text": "my youth I have been afflicted and close"}, {"start": 684.55, "end": 687.01, "text": "to death from my youth I have suffered"}, {"start": 687.01, "end": 688.83, "text": "your terrors and am in despair"}, {"start": 688.83, "end": 691.18, "text": "now we're gonna see in a minute because"}, {"start": 691.18, "end": 693.46, "text": "the the heading of this Psalm tells us"}, {"start": 693.46, "end": 695.5, "text": "who this person is who's writing this"}, {"start": 695.5, "end": 698.38, "text": "praying this that this is almost"}, {"start": 698.38, "end": 700.12, "text": "certainly an exaggeration what he's"}, {"start": 700.12, "end": 702.28, "text": "actually saying is all my life I've been"}, {"start": 702.28, "end": 704.56, "text": "in danger of death all my life you have"}, {"start": 704.56, "end": 706.78, "text": "been abandoning me you know you've never"}, {"start": 706.78, "end": 710.41, "text": "been there for me god never that's"}, {"start": 710.41, "end": 711.91, "text": "really what he's saying and and almost"}, {"start": 711.91, "end": 713.89, "text": "certainly that's an exaggeration and"}, {"start": 713.89, "end": 715.36, "text": "there's a tendency for us to do that"}, {"start": 715.36, "end": 717.76, "text": "when we're in despair when we're just"}, {"start": 717.76, "end": 720.1, "text": "out of our minds with anger and grief"}, {"start": 720.1, "end": 722.89, "text": "and and fear and despair we we tend to"}, {"start": 722.89, "end": 724.99, "text": "read everything in our life through that"}, {"start": 724.99, "end": 727.9, "text": "moment instead of standing back and say"}, {"start": 727.9, "end": 729.61, "text": "well lord in the past you did many good"}, {"start": 729.61, "end": 731.26, "text": "things for me and some of the Psalms do"}, {"start": 731.26, "end": 733.36, "text": "that this guy is not doing that this"}, {"start": 733.36, "end": 734.86, "text": "prayer is not doing that he's saying"}, {"start": 734.86, "end": 736.75, "text": "you've never been there for me he's"}, {"start": 736.75, "end": 737.83, "text": "exaggerating"}, {"start": 737.83, "end": 740.2, "text": "he's cross-examining God he's being"}, {"start": 740.2, "end": 742.15, "text": "expressed incredibly disrespectful if"}, {"start": 742.15, "end": 743.98, "text": "not blasphemous and of course the last"}, {"start": 743.98, "end": 747.12, "text": "statement darkness is my closest friend"}, {"start": 747.12, "end": 749.71, "text": "is quite have charge you know what he's"}, {"start": 749.71, "end": 750.25, "text": "saying"}, {"start": 750.25, "end": 755.29, "text": "he's saying to God God darkness is a"}, {"start": 755.29, "end": 756.85, "text": "clue as a better friend than you are"}, {"start": 756.85, "end": 760.72, "text": "right now I'd rather have darkness than"}, {"start": 760.72, "end": 764.17, "text": "you even darkness is more of a comfort"}, {"start": 764.17, "end": 767.83, "text": "than you are so he's not doing things"}, {"start": 767.83, "end": 769.93, "text": "very well and you have to ask yourself"}, {"start": 769.93, "end": 772.92, "text": "the question why in the world is this"}, {"start": 772.92, "end": 776.65, "text": "prayer in the Bible and many years ago"}, {"start": 776.65, "end": 779.5, "text": "this prayer and also Psalm 88 in Psalm"}, {"start": 779.5, "end": 781.03, "text": "39 which are very similar"}, {"start": 781.03, "end": 783.67, "text": "Psalm 39 ends with the psalmist saying"}, {"start": 783.67, "end": 786.19, "text": "turn your face away from me God so I can"}, {"start": 786.19, "end": 789.36, "text": "get a little bit of peace before I die"}, {"start": 789.36, "end": 792.64, "text": "so Psalm 39 in Psalm 88 end with this"}, {"start": 792.64, "end": 795.01, "text": "despair and this anger toward God and it"}, {"start": 795.01, "end": 797.26, "text": "just ends that way and I always did I"}, {"start": 797.26, "end": 799.13, "text": "never knew what to do with these prayers"}, {"start": 799.13, "end": 801.26, "text": "I just sort of sort of skipped over them"}, {"start": 801.26, "end": 803.21, "text": "really quickly I would never imagine by"}, {"start": 803.21, "end": 806.45, "text": "the way preaching on them and then but"}, {"start": 806.45, "end": 809.3, "text": "many years ago I read just two two"}, {"start": 809.3, "end": 811.07, "text": "sentences in a little commentary by"}, {"start": 811.07, "end": 814.13, "text": "Derek Kidner Derek Kidner was the warden"}, {"start": 814.13, "end": 815.93, "text": "of Tyndale house in Cambridge for many"}, {"start": 815.93, "end": 819.14, "text": "many years and talking about these"}, {"start": 819.14, "end": 821.33, "text": "prayers he said something that just went"}, {"start": 821.33, "end": 822.89, "text": "through me like a shaft it changed my"}, {"start": 822.89, "end": 825.77, "text": "life not only toward these prayers but"}, {"start": 825.77, "end": 827.93, "text": "it changed my life in understanding how"}, {"start": 827.93, "end": 829.28, "text": "to handle darkness and this is what he"}, {"start": 829.28, "end": 833.36, "text": "said quote the very presence of these"}, {"start": 833.36, "end": 836.33, "text": "prayers in Scripture is a witness to"}, {"start": 836.33, "end": 840.11, "text": "God's understanding God knows how men"}, {"start": 840.11, "end": 846.11, "text": "speak when they are desperate now do you"}, {"start": 846.11, "end": 846.92, "text": "realize what that means"}, {"start": 846.92, "end": 849.32, "text": "what Kidner is saying is the very fact"}, {"start": 849.32, "end": 853.22, "text": "that God put these in the Psalter God"}, {"start": 853.22, "end": 855.59, "text": "put them there they're there because God"}, {"start": 855.59, "end": 857.06, "text": "put them there what does that tell us"}, {"start": 857.06, "end": 859.82, "text": "about God a lot see you don't have God"}, {"start": 859.82, "end": 862.82, "text": "looking at this prayer saying I don't"}, {"start": 862.82, "end": 865.43, "text": "want that in my Bible my goodness I"}, {"start": 865.43, "end": 867.11, "text": "don't I don't want anybody to think that"}, {"start": 867.11, "end": 869.93, "text": "it's okay to pray like that I don't want"}, {"start": 869.93, "end": 873.23, "text": "to identify myself as the God is someone"}, {"start": 873.23, "end": 877.13, "text": "who prays like that but God does put it"}, {"start": 877.13, "end": 881.72, "text": "in the Bible and that means God is"}, {"start": 881.72, "end": 883.49, "text": "identifying with those of us who"}, {"start": 883.49, "end": 885.76, "text": "sometimes pray like that you know why"}, {"start": 885.76, "end": 888.83, "text": "he's a God of grace he's understanding"}, {"start": 888.83, "end": 890.36, "text": "he knows how we speak when we're"}, {"start": 890.36, "end": 899.18, "text": "desperate oh my word God is saying I am"}, {"start": 899.18, "end": 900.59, "text": "the god of this man even though he's not"}, {"start": 900.59, "end": 903.26, "text": "getting it right because I'm a God of"}, {"start": 903.26, "end": 907.24, "text": "grace and here's what he's saying to you"}, {"start": 907.24, "end": 909.34, "text": "God is saying to you through this psalm"}, {"start": 909.34, "end": 912.74, "text": "he says I am your God not because you"}, {"start": 912.74, "end": 914.39, "text": "put on a happy face in the morning I am"}, {"start": 914.39, "end": 916.43, "text": "your God not because you say everything"}, {"start": 916.43, "end": 918.44, "text": "right not because you do everything"}, {"start": 918.44, "end": 920.45, "text": "right I'm your guy because I'm a God of"}, {"start": 920.45, "end": 924.65, "text": "grace do you know how liberating that is"}, {"start": 924.65, "end": 929.35, "text": "I can tell you"}, {"start": 929.35, "end": 931.72, "text": "I can ultimately just say I've learned"}, {"start": 931.72, "end": 933.55, "text": "10 times more about the grace of God in"}, {"start": 933.55, "end": 936.04, "text": "dark times than I ever did in times of"}, {"start": 936.04, "end": 941.2, "text": "prosperity number three not only are"}, {"start": 941.2, "end": 942.82, "text": "dark times the best places to learn"}, {"start": 942.82, "end": 944.2, "text": "about the grace of God they're also the"}, {"start": 944.2, "end": 947.98, "text": "best places to become a person of"}, {"start": 947.98, "end": 953.74, "text": "greatness what do I mean well it's true"}, {"start": 953.74, "end": 956.44, "text": "that he's not doing things right he's"}, {"start": 956.44, "end": 957.79, "text": "saying a lot of things he shouldn't be"}, {"start": 957.79, "end": 960.73, "text": "saying he's insulting God saying quite a"}, {"start": 960.73, "end": 962.59, "text": "few things he shouldn't be saying but he"}, {"start": 962.59, "end": 966.31, "text": "is saying them to God and that reminds"}, {"start": 966.31, "end": 969.28, "text": "us of the entire book of Job see let's"}, {"start": 969.28, "end": 970.66, "text": "think about the book of Job Joe the book"}, {"start": 970.66, "end": 973.9, "text": "of job starts with Satan coming in to"}, {"start": 973.9, "end": 975.88, "text": "the presence of God and God says have"}, {"start": 975.88, "end": 977.71, "text": "you seen my servant job there is none"}, {"start": 977.71, "end": 978.64, "text": "like him in all the earth"}, {"start": 978.64, "end": 983.92, "text": "and Satan says to God does job's serve"}, {"start": 983.92, "end": 986.41, "text": "God for not does job's serve God for"}, {"start": 986.41, "end": 989.5, "text": "nothing so what Satan's doing is he's"}, {"start": 989.5, "end": 992.11, "text": "he's questioning the idea that God that"}, {"start": 992.11, "end": 994.21, "text": "that job really serves God or really"}, {"start": 994.21, "end": 995.8, "text": "loves God here's basically here's what"}, {"start": 995.8, "end": 997.75, "text": "he's saying he says when he says does"}, {"start": 997.75, "end": 998.86, "text": "job's serve God for nothing"}, {"start": 998.86, "end": 1001.2, "text": "what he's saying is job is in a"}, {"start": 1001.2, "end": 1003.5, "text": "transactional relationship with you God"}, {"start": 1003.5, "end": 1007.14, "text": "job is doing XYZ but only because you do"}, {"start": 1007.14, "end": 1010.83, "text": "XYZ job is praying and he's going and"}, {"start": 1010.83, "end": 1012.78, "text": "he's making doing sacrifices and he's"}, {"start": 1012.78, "end": 1014.73, "text": "and he's obeying your commands but"}, {"start": 1014.73, "end": 1016.92, "text": "because you answer his prayers and you"}, {"start": 1016.92, "end": 1018.96, "text": "bless him and you give him your peace"}, {"start": 1018.96, "end": 1021.93, "text": "and you do all these things he's not"}, {"start": 1021.93, "end": 1025.11, "text": "really loving you for you it's all"}, {"start": 1025.11, "end": 1027.06, "text": "transactional he's actually loving"}, {"start": 1027.06, "end": 1030.27, "text": "himself and using you he's doing things"}, {"start": 1030.27, "end": 1033.93, "text": "only because you are benefiting him so"}, {"start": 1033.93, "end": 1036.96, "text": "take away those things give him outer"}, {"start": 1036.96, "end": 1039.72, "text": "darkness and inner darkness and you'll"}, {"start": 1039.72, "end": 1042.54, "text": "see he'll curse you because he's just a"}, {"start": 1042.54, "end": 1043.58, "text": "mercenary"}, {"start": 1043.58, "end": 1047.16, "text": "he doesn't love you for yourself he's"}, {"start": 1047.16, "end": 1051.51, "text": "loving himself and using you now that's"}, {"start": 1051.51, "end": 1055.23, "text": "quite a charge especially when you that"}, {"start": 1055.23, "end": 1056.67, "text": "has probably happened to everybody in"}, {"start": 1056.67, "end": 1058.02, "text": "this room at one point have you ever"}, {"start": 1058.02, "end": 1059.76, "text": "thought that somebody liked you for you"}, {"start": 1059.76, "end": 1061.77, "text": "that they actually just loved you or"}, {"start": 1061.77, "end": 1063.03, "text": "liked you"}, {"start": 1063.03, "end": 1064.41, "text": "and then you found out they were using"}, {"start": 1064.41, "end": 1066.36, "text": "you because they felt like well you"}, {"start": 1066.36, "end": 1068.55, "text": "could open a door for them or through"}, {"start": 1068.55, "end": 1070.23, "text": "you they could they could get to"}, {"start": 1070.23, "end": 1071.55, "text": "somebody else and it's a horrible"}, {"start": 1071.55, "end": 1073.23, "text": "feeling of being used you feel like hey"}, {"start": 1073.23, "end": 1074.34, "text": "I thought you liked me and you're just"}, {"start": 1074.34, "end": 1076.62, "text": "using me okay"}, {"start": 1076.62, "end": 1079.44, "text": "well how do you think God feels and how"}, {"start": 1079.44, "end": 1081.12, "text": "much less appropriate is that to use God"}, {"start": 1081.12, "end": 1082.86, "text": "that way so what Satan is bringing up is"}, {"start": 1082.86, "end": 1084.93, "text": "actually very important and of course"}, {"start": 1084.93, "end": 1087.15, "text": "don't forget that the book of Job was"}, {"start": 1087.15, "end": 1088.86, "text": "written to everyone to read whoever"}, {"start": 1088.86, "end": 1091.02, "text": "wrote the book of Job did not want us"}, {"start": 1091.02, "end": 1093.48, "text": "justice here that Satan was saying that"}, {"start": 1093.48, "end": 1097.19, "text": "about job the author of the book of Job"}, {"start": 1097.19, "end": 1099.99, "text": "wants us to see that Jake that Satan is"}, {"start": 1099.99, "end": 1103.44, "text": "saying that about us Satan is saying do"}, {"start": 1103.44, "end": 1105.66, "text": "we really serve God for not do we serve"}, {"start": 1105.66, "end": 1107.34, "text": "God for nothing do we really love God"}, {"start": 1107.34, "end": 1110.34, "text": "for himself or are we at a transactional"}, {"start": 1110.34, "end": 1110.97, "text": "relationship"}, {"start": 1110.97, "end": 1116.58, "text": "okay so class is Satan right about you"}, {"start": 1116.58, "end": 1120.87, "text": "and me and I think the an honest answer"}, {"start": 1120.87, "end": 1122.13, "text": "please don't answer that on this"}, {"start": 1122.13, "end": 1127.23, "text": "preacher I think the right answer that"}, {"start": 1127.23, "end": 1130.92, "text": "is to some degree yeah at least we all"}, {"start": 1130.92, "end": 1132.0, "text": "start out that way"}, {"start": 1132.0, "end": 1134.58, "text": "let's be honest about it we all come to"}, {"start": 1134.58, "end": 1135.99, "text": "God I doesn't mean I you don't really"}, {"start": 1135.99, "end": 1137.76, "text": "trust in Christ as Savior I'm not saying"}, {"start": 1137.76, "end": 1139.62, "text": "you haven't really you said I really"}, {"start": 1139.62, "end": 1140.7, "text": "want to believe and I really want to"}, {"start": 1140.7, "end": 1142.83, "text": "follow Jesus but to a great degree in"}, {"start": 1142.83, "end": 1144.51, "text": "the beginning we come because we got a"}, {"start": 1144.51, "end": 1145.98, "text": "problem or because we got a need or"}, {"start": 1145.98, "end": 1147.54, "text": "there's an emptiness or something and we"}, {"start": 1147.54, "end": 1150.45, "text": "come because we want something and if we"}, {"start": 1150.45, "end": 1153.78, "text": "stay in that state we'll be up and down"}, {"start": 1153.78, "end": 1155.24, "text": "depending on how things are going"}, {"start": 1155.24, "end": 1157.31, "text": "there's a certain there's still a"}, {"start": 1157.31, "end": 1159.5, "text": "self-centeredness in the middle of our"}, {"start": 1159.5, "end": 1161.91, "text": "Christianity and it's the reason why"}, {"start": 1161.91, "end": 1163.44, "text": "we're getting all knocked around all the"}, {"start": 1163.44, "end": 1164.91, "text": "time everything something comes along"}, {"start": 1164.91, "end": 1167.34, "text": "and it you say why isn't God doing this"}, {"start": 1167.34, "end": 1169.08, "text": "and we really get cast on and get upset"}, {"start": 1169.08, "end": 1172.74, "text": "but here's what's happening an old test"}, {"start": 1172.74, "end": 1175.14, "text": "professor years ago trying to help me"}, {"start": 1175.14, "end": 1177.66, "text": "understand the book of Job said do you"}, {"start": 1177.66, "end": 1179.1, "text": "notice how after Jobe says all these"}, {"start": 1179.1, "end": 1180.51, "text": "terrible prayers because a lot of job's"}, {"start": 1180.51, "end": 1183.0, "text": "prayers are very similar to this he's"}, {"start": 1183.0, "end": 1185.46, "text": "always saying terrible things to God but"}, {"start": 1185.46, "end": 1189.42, "text": "at the very end Joe God says Jobe has"}, {"start": 1189.42, "end": 1191.01, "text": "honored me and he actually turns to"}, {"start": 1191.01, "end": 1192.42, "text": "job's friends and says you better a"}, {"start": 1192.42, "end": 1194.4, "text": "better ask job to pray for you I'm gonna"}, {"start": 1194.4, "end": 1196.32, "text": "smite you Jobe has honored me and you"}, {"start": 1196.32, "end": 1196.86, "text": "have not"}, {"start": 1196.86, "end": 1199.74, "text": "and the old test professor said why in"}, {"start": 1199.74, "end": 1201.09, "text": "the world after all those terrible"}, {"start": 1201.09, "end": 1205.59, "text": "prayers would God say job honored me and"}, {"start": 1205.59, "end": 1209.21, "text": "he says the answer is they were prayers"}, {"start": 1209.21, "end": 1212.79, "text": "you see job was being angry and he was"}, {"start": 1212.79, "end": 1214.65, "text": "complaining and he was being angry but"}, {"start": 1214.65, "end": 1216.179, "text": "he was he was being angry and"}, {"start": 1216.179, "end": 1218.49, "text": "complaining to God he never walked away"}, {"start": 1218.49, "end": 1222.39, "text": "from God he said I don't understand you"}, {"start": 1222.39, "end": 1224.22, "text": "God I'm angry at you but he never turned"}, {"start": 1224.22, "end": 1228.87, "text": "away he stayed with God when he was"}, {"start": 1228.87, "end": 1230.549, "text": "getting nothing out of it which means in"}, {"start": 1230.549, "end": 1234.96, "text": "the end Satan was defeated and what's"}, {"start": 1234.96, "end": 1237.66, "text": "happening here is this man even though"}, {"start": 1237.66, "end": 1239.85, "text": "he is not in any way praying the way he"}, {"start": 1239.85, "end": 1242.61, "text": "ought to pray he's still praying he says"}, {"start": 1242.61, "end": 1244.169, "text": "darkness is my closest friend but he's"}, {"start": 1244.169, "end": 1248.46, "text": "saying it to God which means Satan is"}, {"start": 1248.46, "end": 1252.059, "text": "defeated which means when you go through"}, {"start": 1252.059, "end": 1256.309, "text": "darkness if you don't feel God's there"}, {"start": 1256.309, "end": 1258.69, "text": "but you hold on anyway and you say you"}, {"start": 1258.69, "end": 1262.799, "text": "know what you're God and I'm not and I'm"}, {"start": 1262.799, "end": 1264.45, "text": "not getting anything out of this but I'm"}, {"start": 1264.45, "end": 1266.04, "text": "still gonna pray I'm still gonna go to"}, {"start": 1266.04, "end": 1267.75, "text": "church and worship I'm still going to"}, {"start": 1267.75, "end": 1269.64, "text": "love my neighbor I'm still gonna do the"}, {"start": 1269.64, "end": 1271.86, "text": "things I ought to do that will turn you"}, {"start": 1271.86, "end": 1274.86, "text": "into a person not self-centered not in a"}, {"start": 1274.86, "end": 1276.6, "text": "transactional relationship up and down"}, {"start": 1276.6, "end": 1278.46, "text": "all the time it'll turn you into a"}, {"start": 1278.46, "end": 1282.9, "text": "person of endurance of stability of"}, {"start": 1282.9, "end": 1286.08, "text": "strength of greatness at the end of the"}, {"start": 1286.08, "end": 1288.929, "text": "book Lord of the Rings the book not the"}, {"start": 1288.929, "end": 1292.5, "text": "movie Sam you know the friend of Frodo"}, {"start": 1292.5, "end": 1294.809, "text": "they're on their way to Mount Doom and"}, {"start": 1294.809, "end": 1296.94, "text": "they they getting close to the end and"}, {"start": 1296.94, "end": 1299.01, "text": "their strength is almost out and Sam"}, {"start": 1299.01, "end": 1300.6, "text": "looks up to the top of Mount Doom and he"}, {"start": 1300.6, "end": 1302.309, "text": "suddenly realizes we're gonna die no"}, {"start": 1302.309, "end": 1303.75, "text": "matter what happens we're gonna die and"}, {"start": 1303.75, "end": 1305.549, "text": "the thought comes to him"}, {"start": 1305.549, "end": 1307.74, "text": "just lay down curl up in a little ball"}, {"start": 1307.74, "end": 1311.549, "text": "and go to sleep and then what the text"}, {"start": 1311.549, "end": 1313.71, "text": "tells us then something begins to happen"}, {"start": 1313.71, "end": 1317.669, "text": "and it says this quote but even as hope"}, {"start": 1317.669, "end": 1322.47, "text": "died in Sam or seemed to die it was"}, {"start": 1322.47, "end": 1324.02, "text": "turned to a new strength"}, {"start": 1324.02, "end": 1326.82, "text": "Sam's plain Hobbit face grew Stern"}, {"start": 1326.82, "end": 1330.63, "text": "almost grim as the will hardened in him"}, {"start": 1330.63, "end": 1332.94, "text": "and he felt through all his limbs a"}, {"start": 1332.94, "end": 1336.33, "text": "thrill as if he was turning into some"}, {"start": 1336.33, "end": 1337.98, "text": "creature of stone and steel that neither"}, {"start": 1337.98, "end": 1339.87, "text": "despair nor weariness their endless"}, {"start": 1339.87, "end": 1343.89, "text": "barren miles could subdue he was being"}, {"start": 1343.89, "end": 1345.45, "text": "turned into something of greatness and"}, {"start": 1345.45, "end": 1348.6, "text": "it's in the darkness where you throw"}, {"start": 1348.6, "end": 1351.48, "text": "away that transactional approach it's"}, {"start": 1351.48, "end": 1353.01, "text": "almost like when bad things happen God"}, {"start": 1353.01, "end": 1354.72, "text": "is looking at you and saying okay now"}, {"start": 1354.72, "end": 1355.71, "text": "we're gonna figure out whether you got"}, {"start": 1355.71, "end": 1358.08, "text": "into the Christian faith to get me to"}, {"start": 1358.08, "end": 1360.36, "text": "serve you or an order that you would"}, {"start": 1360.36, "end": 1361.76, "text": "serve me now we're gonna find out"}, {"start": 1361.76, "end": 1364.08, "text": "because right now you're not gonna get"}, {"start": 1364.08, "end": 1366.72, "text": "much out of a relationship with me now"}, {"start": 1366.72, "end": 1368.549, "text": "we're gonna see whether you're serving"}, {"start": 1368.549, "end": 1370.65, "text": "me or yourself whether you're loving me"}, {"start": 1370.65, "end": 1373.98, "text": "or yourself and when you say okay I'm"}, {"start": 1373.98, "end": 1375.99, "text": "gonna love you I'm gonna serve you it's"}, {"start": 1375.99, "end": 1378.72, "text": "gonna change you it's gonna make you an"}, {"start": 1378.72, "end": 1381.33, "text": "unflappable person it's gonna make you"}, {"start": 1381.33, "end": 1386.19, "text": "you know what it made Sam you know he"}, {"start": 1386.19, "end": 1387.659, "text": "was turning into some creature of stone"}, {"start": 1387.659, "end": 1390.299, "text": "and steel that neither despair nor"}, {"start": 1390.299, "end": 1392.52, "text": "weariness nor endless barren miles could"}, {"start": 1392.52, "end": 1397.74, "text": "subdue now lastly it does begin to weave"}, {"start": 1397.74, "end": 1399.45, "text": "we've actually up to now really not"}, {"start": 1399.45, "end": 1402.96, "text": "address the question he believed his"}, {"start": 1402.96, "end": 1406.62, "text": "darkness was objective and he believed"}, {"start": 1406.62, "end": 1409.44, "text": "his darkness was permanent he says so he"}, {"start": 1409.44, "end": 1410.94, "text": "doesn't believe he's not saying I just"}, {"start": 1410.94, "end": 1412.35, "text": "feel that you're not here God he's"}, {"start": 1412.35, "end": 1414.809, "text": "saying you're not there and he doesn't"}, {"start": 1414.809, "end": 1416.549, "text": "say that this is temporary says this is"}, {"start": 1416.549, "end": 1421.35, "text": "permanent in other words the this man"}, {"start": 1421.35, "end": 1424.71, "text": "believed that his darkness was absolute"}, {"start": 1424.71, "end": 1428.09, "text": "not relative it wasn't temporary it"}, {"start": 1428.09, "end": 1430.919, "text": "wasn't subjective very subjective"}, {"start": 1430.919, "end": 1432.63, "text": "it wasn't he wasn't saying subjectively"}, {"start": 1432.63, "end": 1434.13, "text": "I feel you're not there but object will"}, {"start": 1434.13, "end": 1435.87, "text": "be I know you're there no no it was"}, {"start": 1435.87, "end": 1440.7, "text": "absolute but we know he's wrong we know"}, {"start": 1440.7, "end": 1444.48, "text": "his suffering actually was relative it"}, {"start": 1444.48, "end": 1446.94, "text": "was temporary and that God really was"}, {"start": 1446.94, "end": 1448.5, "text": "there for him how do we know that well"}, {"start": 1448.5, "end": 1452.13, "text": "because the the psalmist the man who"}, {"start": 1452.13, "end": 1454.429, "text": "wrote the psalm was a man named Haman"}, {"start": 1454.429, "end": 1457.35, "text": "not Haman who is the villain of the book"}, {"start": 1457.35, "end": 1459.929, "text": "of Esther but Heymann and what we know"}, {"start": 1459.929, "end": 1462.12, "text": "about Heymann is this that in first"}, {"start": 1462.12, "end": 1464.8, "text": "chronicles six Heymann was the leader"}, {"start": 1464.8, "end": 1466.81, "text": "the kohathites guild of musicians and"}, {"start": 1466.81, "end": 1469.75, "text": "poets who wrote many of the Psalms if"}, {"start": 1469.75, "end": 1471.37, "text": "you want to go see some of them they"}, {"start": 1471.37, "end": 1473.08, "text": "were in there in the 40s"}, {"start": 1473.08, "end": 1475.93, "text": "the the 40s in the Psalms or the 80s and"}, {"start": 1475.93, "end": 1478.87, "text": "the Psalms now keep this in mind the"}, {"start": 1478.87, "end": 1481.9, "text": "Psalms the book the Psalms is one of the"}, {"start": 1481.9, "end": 1484.54, "text": "greatest works of literary history in"}, {"start": 1484.54, "end": 1485.68, "text": "the history of the world everybody"}, {"start": 1485.68, "end": 1486.85, "text": "understands that whether you're"}, {"start": 1486.85, "end": 1490.42, "text": "Christian or not and that means that"}, {"start": 1490.42, "end": 1493.86, "text": "this man wrote some of the greatest"}, {"start": 1493.86, "end": 1496.96, "text": "literary art musical art in the history"}, {"start": 1496.96, "end": 1497.44, "text": "of the world"}, {"start": 1497.44, "end": 1499.63, "text": "it means millions of people have been"}, {"start": 1499.63, "end": 1501.63, "text": "helped by him and what does that mean"}, {"start": 1501.63, "end": 1504.43, "text": "you know how pressure turns a piece of"}, {"start": 1504.43, "end": 1507.94, "text": "coal into a diamond this suffering was"}, {"start": 1507.94, "end": 1510.22, "text": "not absolutely it was relative it was"}, {"start": 1510.22, "end": 1513.85, "text": "temporary and God was there because"}, {"start": 1513.85, "end": 1515.29, "text": "through this suffering this man was"}, {"start": 1515.29, "end": 1518.22, "text": "being turned into a great artist"}, {"start": 1518.22, "end": 1520.54, "text": "somebody who by the way do you think"}, {"start": 1520.54, "end": 1521.74, "text": "Heymann when he was going through this"}, {"start": 1521.74, "end": 1526.72, "text": "thought that 2500 years later several"}, {"start": 1526.72, "end": 1528.76, "text": "thousand people in the middle of London"}, {"start": 1528.76, "end": 1531.28, "text": "would be talking about his great works"}, {"start": 1531.28, "end": 1533.68, "text": "do you think that's what they would have"}, {"start": 1533.68, "end": 1536.11, "text": "thought absolutely not he couldn't have"}, {"start": 1536.11, "end": 1538.42, "text": "thought that but you see he couldn't see"}, {"start": 1538.42, "end": 1541.81, "text": "it but we can well we can see is that"}, {"start": 1541.81, "end": 1545.98, "text": "God was there that God was working it"}, {"start": 1545.98, "end": 1547.21, "text": "was temporary"}, {"start": 1547.21, "end": 1548.68, "text": "God was turning him into something"}, {"start": 1548.68, "end": 1550.0, "text": "wonderful and great that he was gonna"}, {"start": 1550.0, "end": 1553.57, "text": "use the rest of it for centuries and you"}, {"start": 1553.57, "end": 1555.85, "text": "can know that too if God is your Savior"}, {"start": 1555.85, "end": 1558.37, "text": "if you're relying on him he is there"}, {"start": 1558.37, "end": 1560.44, "text": "even though you don't feel it he hasn't"}, {"start": 1560.44, "end": 1562.03, "text": "abandoned you he is working you say well"}, {"start": 1562.03, "end": 1564.55, "text": "how do I know that here's how you can"}, {"start": 1564.55, "end": 1568.78, "text": "know that at the end of the book of at"}, {"start": 1568.78, "end": 1571.99, "text": "the end of Psalm 39 God's face is turned"}, {"start": 1571.99, "end": 1579.04, "text": "away the end of Psalm 88 darkness losing"}, {"start": 1579.04, "end": 1583.06, "text": "God's face darkness does that sound"}, {"start": 1583.06, "end": 1589.03, "text": "familiar to you Matthew 27:45 from the"}, {"start": 1589.03, "end": 1592.3, "text": "sixth hour to the ninth hour darkness"}, {"start": 1592.3, "end": 1595.45, "text": "came down over all the land at the ninth"}, {"start": 1595.45, "end": 1597.46, "text": "hour Jesus Christ on the cross cried my"}, {"start": 1597.46, "end": 1598.73, "text": "god my god why"}, {"start": 1598.73, "end": 1601.34, "text": "you turned your face for me No why have"}, {"start": 1601.34, "end": 1604.309, "text": "you forsaken me and at that moment the"}, {"start": 1604.309, "end": 1606.71, "text": "earth shook and the rocks split and the"}, {"start": 1606.71, "end": 1608.12, "text": "tombs broke open and the body of the"}, {"start": 1608.12, "end": 1609.5, "text": "holy people who had died were raised to"}, {"start": 1609.5, "end": 1612.5, "text": "life human thought he was getting the"}, {"start": 1612.5, "end": 1614.179, "text": "absolute total darkness he was totally"}, {"start": 1614.179, "end": 1616.85, "text": "abandoned by God no Jesus got the total"}, {"start": 1616.85, "end": 1619.82, "text": "darkness that human thought he was"}, {"start": 1619.82, "end": 1622.669, "text": "getting when Jesus went to the cross he"}, {"start": 1622.669, "end": 1623.84, "text": "was abandoned"}, {"start": 1623.84, "end": 1627.98, "text": "really not just subjectively my God my"}, {"start": 1627.98, "end": 1629.6, "text": "God why has that forsaken me on the"}, {"start": 1629.6, "end": 1631.7, "text": "cross Jesus Christ really got the wrath"}, {"start": 1631.7, "end": 1634.13, "text": "of God not just I felt that right he"}, {"start": 1634.13, "end": 1636.61, "text": "actually got the wrath of God"}, {"start": 1636.61, "end": 1639.38, "text": "everybody abandoned Jesus so only Jesus"}, {"start": 1639.38, "end": 1640.61, "text": "Christ of all the people who have ever"}, {"start": 1640.61, "end": 1644.919, "text": "trusted God his Savior only Jesus Christ"}, {"start": 1645.19, "end": 1648.5, "text": "darkness really was his only friend his"}, {"start": 1648.5, "end": 1650.51, "text": "disciples had left him his people had"}, {"start": 1650.51, "end": 1653.36, "text": "left him his father had abandoned him"}, {"start": 1653.36, "end": 1654.799, "text": "darkness was his only friend you know"}, {"start": 1654.799, "end": 1658.85, "text": "why he was taking the sins upon himself"}, {"start": 1658.85, "end": 1661.52, "text": "that we've committed Satan's right about"}, {"start": 1661.52, "end": 1664.07, "text": "us we do exploit others we are"}, {"start": 1664.07, "end": 1667.04, "text": "self-centered we do use other people we"}, {"start": 1667.04, "end": 1668.57, "text": "deserve to have God turn his face away"}, {"start": 1668.57, "end": 1670.88, "text": "from us we deserve that darkness but"}, {"start": 1670.88, "end": 1672.47, "text": "Jesus took the darkness so that when you"}, {"start": 1672.47, "end": 1675.89, "text": "believe in him your sins are forgiven or"}, {"start": 1675.89, "end": 1678.7, "text": "put it another way Jesus Christ"}, {"start": 1678.7, "end": 1681.08, "text": "experienced darkness as his only friends"}, {"start": 1681.08, "end": 1682.669, "text": "so in your darkness you can know that"}, {"start": 1682.669, "end": 1684.2, "text": "Jesus is still your friend he's still"}, {"start": 1684.2, "end": 1688.73, "text": "there Jesus was truly abandoned so that"}, {"start": 1688.73, "end": 1691.94, "text": "you will only feel abandoned and you can"}, {"start": 1691.94, "end": 1694.04, "text": "know that God still there he's not going"}, {"start": 1694.04, "end": 1696.41, "text": "to abandon you no matter what you've"}, {"start": 1696.41, "end": 1698.69, "text": "done wrong because of what Jesus Christ"}, {"start": 1698.69, "end": 1700.73, "text": "has done he's taken the penalty it all"}, {"start": 1700.73, "end": 1703.48, "text": "fell on him it all fell into his heart"}, {"start": 1703.48, "end": 1705.47, "text": "when Jesus was in the Garden of"}, {"start": 1705.47, "end": 1708.41, "text": "Gethsemane and he felt that darkness"}, {"start": 1708.41, "end": 1709.82, "text": "coming down on him and he knew that he"}, {"start": 1709.82, "end": 1712.46, "text": "had to die in order to save us he stayed"}, {"start": 1712.46, "end": 1715.97, "text": "with us he did not abandon us in his"}, {"start": 1715.97, "end": 1717.29, "text": "darkness so why in the world do you"}, {"start": 1717.29, "end": 1719.62, "text": "think he would abandon you and yours now"}, {"start": 1719.62, "end": 1724.97, "text": "he won't do it listen you remember that"}, {"start": 1724.97, "end": 1727.7, "text": "sarcastic question that sarcastic"}, {"start": 1727.7, "end": 1730.39, "text": "question that Heymann asked"}, {"start": 1730.39, "end": 1733.36, "text": "what he said he says do the dead rise up"}, {"start": 1733.36, "end": 1736.0, "text": "and praise you if you believe in Jesus"}, {"start": 1736.0, "end": 1737.77, "text": "Christ is your Lord and Savior"}, {"start": 1737.77, "end": 1740.62, "text": "the answer is yeah you will rise up and"}, {"start": 1740.62, "end": 1743.17, "text": "you hold on to that you hold on that I"}, {"start": 1743.17, "end": 1744.76, "text": "know a woman with some chronic illness"}, {"start": 1744.76, "end": 1746.83, "text": "occasionally you ask her how are you"}, {"start": 1746.83, "end": 1748.84, "text": "feeling it doesn't it hurt"}, {"start": 1748.84, "end": 1751.21, "text": "aren't you in a lot of discomfort and"}, {"start": 1751.21, "end": 1753.01, "text": "she says nothing that the Resurrection"}, {"start": 1753.01, "end": 1757.41, "text": "won't cure and she's absolutely right"}, {"start": 1757.65, "end": 1761.59, "text": "hold on to that cling to that Michael"}, {"start": 1761.59, "end": 1762.76, "text": "Wilcock is another guy who wrote a"}, {"start": 1762.76, "end": 1764.38, "text": "really great little commentary on on"}, {"start": 1764.38, "end": 1765.79, "text": "this Psalm and this is what he says"}, {"start": 1765.79, "end": 1769.39, "text": "close with these words he says in about"}, {"start": 1769.39, "end": 1771.91, "text": "Psalm 88 this darkness can happen to a"}, {"start": 1771.91, "end": 1774.7, "text": "believer this Psalm says it doesn't mean"}, {"start": 1774.7, "end": 1777.73, "text": "you're lost this darkness can happen to"}, {"start": 1777.73, "end": 1778.96, "text": "someone who does not deserve it"}, {"start": 1778.96, "end": 1781.48, "text": "after all it happened to Jesus that"}, {"start": 1781.48, "end": 1784.06, "text": "doesn't mean you've strayed this"}, {"start": 1784.06, "end": 1785.74, "text": "darkness can happen at any time as long"}, {"start": 1785.74, "end": 1788.02, "text": "as this world lasts because only in the"}, {"start": 1788.02, "end": 1790.18, "text": "next world will such things be done away"}, {"start": 1790.18, "end": 1792.43, "text": "with this darkness can happen without"}, {"start": 1792.43, "end": 1795.94, "text": "you knowing why but there are answers"}, {"start": 1795.94, "end": 1799.36, "text": "there is a purpose and eventually you"}, {"start": 1799.36, "end": 1801.23, "text": "will know it"}, {"start": 1801.23, "end": 1804.309, "text": "END"}];
+    let player;
+    let isAutoScroll = false;
+    let syncInterval;
+    let currentFontSize = 16;
+    let isDarkMode = true;
+    let isVideoVisible = true;
+
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('yt-player', {
+            events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
+        });
+    }
+
+    function onPlayerReady(event) {
+        renderTranscript();
+        setupControls();
+    }
+
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            startSync(); updatePlayIcon(true);
+        } else if (event.data == YT.PlayerState.ENDED) {
+            stopSync(); showEndScreen(); updatePlayIcon(false);
+        } else {
+            stopSync(); updatePlayIcon(false);
+        }
+    }
+
+    function renderTranscript() {
+        const container = document.getElementById('transcript-area');
+        container.innerHTML = '';
+        transcriptData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'cue';
+            div.id = 'cue-' + index;
+            const dateObj = new Date(item.start * 1000);
+            const timeStr = dateObj.toISOString().substr(14, 5);
+            div.innerHTML = `<span class="cue-time">[${timeStr}]</span>${item.text}`;
+            div.onclick = () => { player.seekTo(item.start, true); player.playVideo(); };
+            container.appendChild(div);
+        });
+    }
+
+    function startSync() {
+        stopSync();
+        syncInterval = setInterval(() => {
+            const currentTime = player.getCurrentTime();
+            highlightCue(currentTime);
+        }, 300);
+    }
+
+    function stopSync() { clearInterval(syncInterval); }
+
+    function highlightCue(time) {
+        const index = transcriptData.findIndex(item => time >= item.start && time < item.end);
+        document.querySelectorAll('.cue.active').forEach(el => el.classList.remove('active'));
+        if (index !== -1) {
+            const activeEl = document.getElementById('cue-' + index);
+            if (activeEl) {
+                activeEl.classList.add('active');
+                if (isAutoScroll) activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
+
+    function setupControls() {
+        document.getElementById('btn-play').onclick = () => {
+            const state = player.getPlayerState();
+            if (state === YT.PlayerState.PLAYING) player.pauseVideo();
+            else player.playVideo();
+        };
+        document.getElementById('btn-rewind').onclick = () => { player.seekTo(Math.max(0, player.getCurrentTime() - 10)); };
+        document.getElementById('btn-forward').onclick = () => { player.seekTo(player.getCurrentTime() + 10); };
+
+        const vidBox = document.getElementById('video-box');
+        const toggleBtn = document.getElementById('btn-toggle-video');
+        toggleBtn.onclick = () => {
+            isVideoVisible = !isVideoVisible;
+            if (isVideoVisible) {
+                vidBox.classList.remove('hidden');
+                toggleBtn.innerHTML = '👁️'; toggleBtn.classList.remove('active');
+            } else {
+                vidBox.classList.add('hidden');
+                toggleBtn.innerHTML = '🙈'; toggleBtn.classList.add('active');
+            }
+        };
+
+        document.getElementById('btn-font-up').onclick = () => {
+            if (currentFontSize < 26) { currentFontSize += 2; document.documentElement.style.setProperty('--font-size', currentFontSize + 'px'); }
+        };
+        document.getElementById('btn-font-down').onclick = () => {
+            if (currentFontSize > 12) { currentFontSize -= 2; document.documentElement.style.setProperty('--font-size', currentFontSize + 'px'); }
+        };
+
+        const themeBtn = document.getElementById('btn-theme');
+        themeBtn.onclick = () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('light-mode', !isDarkMode);
+            themeBtn.innerHTML = isDarkMode ? '☀️' : '🌙';
+        };
+
+        const scrollBtn = document.getElementById('btn-autoscroll');
+        scrollBtn.onclick = () => { isAutoScroll = !isAutoScroll; scrollBtn.classList.toggle('active', isAutoScroll); };
+
+        document.getElementById('btn-replay').onclick = () => {
+            document.getElementById('end-screen').style.display = 'none';
+            document.getElementById('transcript-area').style.display = 'block';
+            player.seekTo(0); player.playVideo();
+        };
+    }
+
+    function updatePlayIcon(isPlaying) { document.getElementById('btn-play').innerHTML = isPlaying ? '⏸️' : '▶️'; }
+    function showEndScreen() {
+        document.getElementById('transcript-area').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'block';
+    }
+</script>
+</body>
+</html>
+    
